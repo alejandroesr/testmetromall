@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metro Mall — Directory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --black: #0c0c0c;
+    --white: #f8f6f1;
+    --gold: #c9a84c;
+    --gold-light: #e8d49a;
+    --mid: #2a2a2a;
+    --surface: #161616;
+    --muted: rgba(248,246,241,0.45);
+    --border: rgba(248,246,241,0.1);
+    --font-display: 'Cormorant Garamond', serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: var(--black);
+    overflow: hidden;
+    font-family: var(--font-body);
+    color: var(--white);
+    cursor: none;
+  }
+
+  /* ── SCREENS ── */
+  .screen { position: absolute; inset: 0; display: none; }
+  .screen.active { display: flex; }
+
+  /* ════════════════════════════════
+     SCREEN 1 — VIDEO / INICIO
+  ════════════════════════════════ */
+  #s-video {
+    background: var(--black);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  #vid-el {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0.7;
+  }
+
+  .vid-placeholder {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, #0c0c0c 0%, #1a1a18 50%, #0c0c0c 100%);
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .vid-placeholder-inner {
+    border: 1px dashed rgba(201,168,76,0.3);
+    border-radius: 8px;
+    padding: 40px 60px;
+    text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+  }
+
+  .vid-placeholder-inner svg { opacity: 0.3; }
+  .vid-placeholder-inner p { color: rgba(201,168,76,0.5); font-size: 13px; letter-spacing: 0.15em; font-weight: 300; }
+  .vid-placeholder-inner code { color: rgba(201,168,76,0.7); font-size: 12px; background: rgba(201,168,76,0.08); padding: 6px 12px; border-radius: 4px; margin-top: 4px; display: block; }
+
+  .vid-overlay {
+    position: relative; z-index: 2;
+    display: flex; width: 100%; height: 100%;
+    align-items: stretch;
+  }
+
+  .vid-left {
+    flex: 1;
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 60px 64px;
+  }
+
+  .vid-right {
+    width: 380px;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    border-left: 1px solid var(--border);
+    background: rgba(12,12,12,0.6);
+    gap: 32px;
+    padding: 48px 40px;
+    backdrop-filter: blur(4px);
+  }
+
+  .mall-eyebrow {
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 400;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+
+  .mall-title {
+    font-family: var(--font-display);
+    font-size: 80px; font-weight: 300;
+    line-height: 0.95;
+    color: var(--white);
+    letter-spacing: -0.01em;
+  }
+
+  .mall-title span { color: var(--gold); }
+
+  .mall-tagline {
+    margin-top: 24px;
+    font-size: 14px; font-weight: 300;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    line-height: 1.6;
+  }
+
+  .clock-display {
+    text-align: center;
+  }
+
+  .clock-time {
+    font-family: var(--font-display);
+    font-size: 52px; font-weight: 300;
+    color: var(--white);
+    letter-spacing: 0.04em;
+    line-height: 1;
+  }
+
+  .clock-date {
+    font-size: 12px; font-weight: 300;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    margin-top: 8px;
+    text-transform: uppercase;
+  }
+
+  .divider { width: 40px; height: 1px; background: var(--border); }
+
+  .btn-main {
+    background: var(--gold);
+    color: var(--black);
+    border: none;
+    padding: 18px 40px;
+    border-radius: 2px;
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-main:hover { background: var(--gold-light); }
+  .btn-main:active { transform: scale(0.98); }
+
+  .vid-hint {
+    font-size: 11px; color: var(--muted);
+    letter-spacing: 0.1em;
+    text-align: center;
+    line-height: 1.7;
+  }
+
+  /* idle bar */
+  .idle-track {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 2px; background: rgba(255,255,255,0.08); z-index: 10;
+  }
+  .idle-bar {
+    height: 100%; background: var(--gold);
+    width: 100%; transform-origin: left;
+    transition: none;
+  }
+
+  /* ════════════════════════════════
+     SCREEN 2 — DIRECTORIO
+  ════════════════════════════════ */
+  #s-dir {
+    flex-direction: row;
+    background: var(--black);
+  }
+
+  /* Left panel */
+  .dir-sidebar {
+    width: 300px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    padding: 0;
+    flex-shrink: 0;
+  }
+
+  .dir-logo-area {
+    padding: 32px 28px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dir-logo-small {
+    font-family: var(--font-display);
+    font-size: 22px; font-weight: 300;
+    color: var(--white);
+    letter-spacing: 0.06em;
+  }
+
+  .dir-logo-small span { color: var(--gold); }
+
+  .dir-logo-sub {
+    font-size: 10px; font-weight: 300;
+    color: var(--muted); letter-spacing: 0.2em;
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+
+  .search-wrap {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .search-box {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px 14px;
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 300;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-box::placeholder { color: var(--muted); }
+  .search-box:focus { border-color: rgba(201,168,76,0.4); }
+
+  .floor-nav {
+    padding: 16px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex; flex-direction: column; gap: 2px;
+  }
+
+  .floor-nav-title {
+    font-size: 10px; font-weight: 400;
+    color: var(--muted); letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0 8px;
+    margin-bottom: 8px;
+  }
+
+  .ftab {
+    padding: 10px 12px;
+    border-radius: 4px;
+    font-size: 13px; font-weight: 300;
+    color: var(--muted);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .ftab:hover { background: rgba(255,255,255,0.04); color: var(--white); }
+
+  .ftab.on {
+    background: rgba(201,168,76,0.12);
+    color: var(--gold);
+  }
+
+  .ftab .count {
+    font-size: 11px;
+    color: inherit;
+    opacity: 0.6;
+  }
+
+  .back-btn {
+    margin: auto 20px 24px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 12px 16px;
+    border-radius: 4px;
+    font-family: var(--font-body);
+    font-size: 12px; font-weight: 300;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: border-color 0.2s, color 0.2s;
+    width: calc(100% - 40px);
+    text-align: center;
+  }
+  .back-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* Main grid */
+  .dir-main {
+    flex: 1;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+
+  .dir-main-header {
+    padding: 28px 36px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: baseline; justify-content: space-between;
+  }
+
+  .dir-main-title {
+    font-family: var(--font-display);
+    font-size: 28px; font-weight: 300;
+    letter-spacing: 0.04em;
+  }
+
+  .dir-main-count {
+    font-size: 12px; font-weight: 300;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .stores-grid {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 28px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    align-content: start;
+  }
+
+  .stores-grid::-webkit-scrollbar { width: 4px; }
+  .stores-grid::-webkit-scrollbar-track { background: transparent; }
+  .stores-grid::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+  .store-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 18px 20px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .store-card:hover { border-color: rgba(201,168,76,0.4); background: rgba(201,168,76,0.04); }
+  .store-card:active { background: rgba(201,168,76,0.08); }
+
+  .sc-top { display: flex; align-items: center; gap: 12px; }
+
+  .sc-icon {
+    width: 56px; height: 56px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.06);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  .sc-name {
+    font-size: 14px; font-weight: 400;
+    color: var(--white);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .sc-cat {
+    font-size: 11px; font-weight: 300;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .sc-bottom {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+
+  .sc-loc {
+    font-size: 11px; font-weight: 300;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  .sc-floor-badge {
+    font-size: 10px; font-weight: 400;
+    color: var(--gold);
+    background: rgba(201,168,76,0.1);
+    padding: 3px 8px; border-radius: 2px;
+    letter-spacing: 0.06em;
+  }
+
+  .empty-msg {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 60px 0;
+    color: var(--muted);
+    font-size: 14px; font-weight: 300;
+    letter-spacing: 0.1em;
+  }
+
+  /* ════════════════════════════════
+     SCREEN 3 — DETALLE TIENDA
+  ════════════════════════════════ */
+  #s-store {
+    flex-direction: row;
+    background: var(--black);
+  }
+
+  .store-left {
+    width: 420px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    flex-shrink: 0;
+    padding: 48px 40px;
+    gap: 28px;
+  }
+
+  .store-back-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 300;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: border-color 0.2s, color 0.2s;
+    align-self: flex-start;
+  }
+  .store-back-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  .store-icon-lg {
+    width: 72px; height: 72px;
+    border-radius: 14px;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 34px;
+  }
+
+  .store-title {
+    font-family: var(--font-display);
+    font-size: 48px; font-weight: 300;
+    color: var(--white);
+    line-height: 1;
+    letter-spacing: 0.01em;
+  }
+
+  .store-cat-tag {
+    display: inline-flex; align-items: center;
+    gap: 6px;
+    font-size: 11px; font-weight: 400;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .info-block { display: flex; flex-direction: column; gap: 0; }
+
+  .info-block-title {
+    font-size: 10px; font-weight: 400;
+    color: var(--muted); letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .info-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .info-row:last-child { border-bottom: none; }
+
+  .info-label {
+    font-size: 12px; font-weight: 300;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .info-val {
+    font-size: 13px; font-weight: 400;
+    color: var(--white);
+    text-align: right;
+  }
+
+  .promo-box {
+    background: rgba(201,168,76,0.08);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 6px;
+    padding: 16px 18px;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+
+  .promo-star {
+    color: var(--gold); font-size: 16px; flex-shrink: 0; margin-top: 1px;
+  }
+
+  .promo-text {
+    font-size: 13px; font-weight: 300;
+    color: var(--gold-light); line-height: 1.5;
+  }
+
+  /* Map area */
+  .store-right {
+    flex: 1;
+    display: flex; flex-direction: column;
+    padding: 48px 52px;
+    gap: 28px;
+  }
+
+  .map-header {
+    display: flex; align-items: baseline; gap: 16px;
+  }
+
+  .map-title {
+    font-family: var(--font-display);
+    font-size: 24px; font-weight: 300;
+    letter-spacing: 0.06em;
+    color: var(--white);
+  }
+
+  .floor-pill {
+    background: var(--gold);
+    color: var(--black);
+    font-size: 11px; font-weight: 500;
+    padding: 4px 12px; border-radius: 2px;
+    letter-spacing: 0.1em;
+  }
+
+  .map-canvas {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    min-height: 300px;
+  }
+
+  /* Schematic floor map */
+  .map-svg { width: 100%; height: 100%; }
+
+  .nearby-section { }
+
+  .nearby-title {
+    font-size: 10px; font-weight: 400;
+    color: var(--muted); letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .nearby-list {
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+
+  .nearby-pill {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 14px;
+    font-size: 12px; font-weight: 300;
+    color: var(--muted);
+    display: flex; align-items: center; gap: 6px;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .nearby-pill:hover { border-color: rgba(201,168,76,0.4); color: var(--white); }
+
+  /* ── KEYBOARD ── */
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .kb-key {
+    flex: 1;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: 15px; font-weight: 400;
+    padding: 12px 4px;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.1s, transform 0.08s;
+    user-select: none;
+    min-width: 0;
+  }
+  .kb-key:active { background: rgba(201,168,76,0.25); transform: scale(0.94); }
+  .kb-key.wide { flex: 1.6; font-size: 13px; }
+  .kb-key.gold { background: rgba(201,168,76,0.15); border-color: rgba(201,168,76,0.3); color: var(--gold); }
+  .kb-key.gold:active { background: rgba(201,168,76,0.35); }
+  .kb-row { display: flex; gap: 6px; justify-content: center; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .screen.active > * { animation: fadeIn 0.35s ease both; }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.7); }
+  }
+
+  .you-dot {
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════ SCREEN 1: VIDEO ══════════════ -->
+<div id="s-video" class="screen active">
+
+  <!-- Reemplaza este bloque con tu etiqueta <video> -->
+<img src="C:\Users\aleja\Documents\KIOSCO MALL\front.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;opacity:0.85;">
+  <!-- Example: <video id="vid-el" autoplay muted loop playsinline src="mall-video.mp4"></video> -->
+
+  <div class="vid-overlay">
+    <div class="vid-left" style="display:flex;align-items:flex-start;justify-content:flex-end;padding-left:60px 64px;">
+      <div style="background:rgba(0,0,0,0.75);padding:32px 48px;text-align:left;display:flex;flex-direction:column;align-items:flex-start;gap:12px;">
+        <div class="mall-eyebrow">Welcome to</div>
+        <div class="mall-title">Metro<br><span>Mall</span></div>
+        <div class="mall-tagline">Over 17 stores · Jewelry & more · Free parking</div>
+      </div>
+    </div>
+    
+    <div class="vid-right">
+      <div class="clock-display">
+        <div class="clock-time" id="clock-time">00:00</div>
+        <div class="clock-date" id="clock-date">—</div>
+      </div>
+      <div class="divider"></div>
+      <button class="btn-main" onclick="goDir()">DIRECTORY</button>
+      <div class="vid-hint">Touch the screen to explore<br>the full directory</div>
+    </div>
+  </div>
+
+  <div class="idle-track">
+    <div class="idle-bar" id="idle-bar"></div>
+  </div>
+</div>
+
+<!-- ══════════════ SCREEN 2: DIRECTORIO ══════════════ -->
+<div id="s-dir" class="screen">
+
+  <div class="dir-sidebar">
+    <div class="dir-logo-area" style="background:linear-gradient(135deg,rgba(0,0,0,0.6),rgba(0,0,0,0.3));backdrop-filter:blur(8px);border-radius:8px 8px 0 0;">
+      <div class="dir-logo-small">Metro <span>Mall</span></div>
+      <div class="dir-logo-sub">Store Directory</div>
+    </div>
+
+    <div class="floor-nav">
+      <div class="floor-nav-title">Floors</div>
+      <div id="floor-tabs"></div>
+    </div>
+
+    <button class="back-btn" onclick="goVideo()">← Back to Home</button>
+
+    <div style="padding:16px 20px 20px;">
+      <div id="search-display" onclick="openKeyboard()" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.3);border-radius:4px;padding:12px 14px;color:var(--white);font-family:var(--font-body);font-size:13px;font-weight:300;cursor:pointer;display:flex;align-items:center;gap:10px;min-height:42px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(201,168,76,0.6)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <span id="search-display-text" style="color:rgba(248,246,241,0.4);flex:1;">Search store or category...</span>
+        <span id="search-clear" onclick="clearSearch(event)" style="display:none;color:var(--gold);font-size:18px;line-height:1;padding:0 2px;">×</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="dir-main">
+    <div class="dir-main-header">
+      <div class="dir-main-title" id="dir-heading">All stores</div>
+      <div class="dir-main-count" id="dir-count"></div>
+    </div>
+    <div class="stores-grid" id="stores-grid"></div>
+  </div>
+  <div class="idle-track">
+    <div class="idle-bar" id="idle-bar-dir"></div>
+  </div>
+
+  <!-- ON-SCREEN KEYBOARD OVERLAY -->
+  <div id="keyboard-overlay" onclick="closeKeyboard()" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,0.6);z-index:100;align-items:flex-end;justify-content:center;">
+    <div onclick="event.stopPropagation()" style="width:100%;background:#1a1a1a;border-top:1px solid rgba(201,168,76,0.2);padding:16px 12px 20px;">
+      <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.4);border-radius:4px;padding:10px 14px;margin-bottom:14px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(201,168,76,0.6)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <span id="kb-text-display" style="flex:1;font-size:15px;color:var(--white);font-family:var(--font-body);font-weight:300;letter-spacing:0.02em;min-height:20px;"></span>
+        <span style="width:2px;height:18px;background:var(--gold);animation:blink 1s step-end infinite;display:inline-block;"></span>
+      </div>
+      <div id="kb-rows" style="display:flex;flex-direction:column;gap:8px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ SCREEN 3: TIENDA ══════════════ -->
+<div id="s-store" class="screen">
+
+  <div class="store-left">
+    <button class="store-back-btn" onclick="goDir()">← Directory</button>
+
+    <div class="store-icon-lg" id="det-icon"></div>
+
+    <div>
+      <div class="store-title" id="det-name"></div>
+      <div class="store-cat-tag" id="det-cat">
+        <span>●</span><span id="det-cat-text"></span>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <div class="info-block-title">Location</div>
+      <div class="info-row">
+        <span class="info-label">Floor</span>
+        <span class="info-val" id="det-piso"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Unit</span>
+        <span class="info-val" id="det-local"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Zone</span>
+        <span class="info-val" id="det-zona"></span>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <div class="info-block-title">Information</div>
+      <div class="info-row">
+        <span class="info-label">Hours</span>
+        <span class="info-val" id="det-hora"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Phone</span>
+        <span class="info-val" id="det-tel"></span>
+      </div>
+    </div>
+
+    <div class="promo-box" id="det-promo" style="display:none">
+      <div class="promo-star">★</div>
+      <div class="promo-text" id="det-promo-text"></div>
+    </div>
+  </div>
+
+  <div class="store-right">
+    <div class="map-header">
+      <div class="map-title">How to get there</div>
+      <div class="floor-pill" id="det-floor-pill"></div>
+    </div>
+
+    <div class="map-canvas">
+      <svg class="map-svg" viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" id="map-svg">
+        <!-- Grid -->
+        <defs>
+          <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+            <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+          </pattern>
+        </defs>
+        <rect width="700" height="320" fill="url(#grid)"/>
+
+        <!-- Floor layout schematic -->
+        <rect x="40" y="40" width="180" height="100" rx="4" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+        <rect x="240" y="40" width="120" height="100" rx="4" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+        <rect x="380" y="40" width="140" height="100" rx="4" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+        <rect x="540" y="40" width="120" height="100" rx="4" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+        <rect x="40" y="180" width="140" height="100" rx="4" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+        <rect x="200" y="180" width="160" height="100" rx="4" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+        <rect x="380" y="180" width="120" height="100" rx="4" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+        <rect x="520" y="180" width="140" height="100" rx="4" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+
+        <!-- Corridors -->
+        <rect x="40" y="150" width="620" height="24" fill="rgba(255,255,255,0.02)" stroke="none"/>
+        <rect x="340" y="40" width="24" height="240" fill="rgba(255,255,255,0.02)" stroke="none"/>
+
+        <!-- You are here marker -->
+        <circle class="you-dot" cx="90" cy="162" r="10" fill="#c9a84c" opacity="0.9"/>
+        <circle cx="90" cy="162" r="16" fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.3"/>
+        <text x="90" y="195" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="9" fill="rgba(201,168,76,0.7)" letter-spacing="0.05em">YOU ARE HERE</text>
+
+        <!-- Path dots (animated) -->
+        <circle class="path-dot" cx="140" cy="162" r="3" fill="#c9a84c" opacity="0.5"/>
+        <circle class="path-dot" cx="190" cy="162" r="3" fill="#c9a84c" opacity="0.5"/>
+        <circle class="path-dot" cx="240" cy="162" r="3" fill="#c9a84c" opacity="0.5"/>
+        <circle class="path-dot" cx="290" cy="162" r="3" fill="#c9a84c" opacity="0.5"/>
+
+        <!-- Store destination (dynamic) -->
+        <rect id="map-dest" x="300" y="180" width="60" height="60" rx="6" fill="rgba(201,168,76,0.2)" stroke="#c9a84c" stroke-width="1.5"/>
+        <text id="map-dest-icon" x="330" y="216" text-anchor="middle" font-size="22">🏪</text>
+        <text id="map-dest-name" x="330" y="258" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="9" fill="#c9a84c" letter-spacing="0.08em">TIENDA</text>
+      </svg>
+    </div>
+
+    <div class="nearby-section">
+      <div class="nearby-title">Nearby stores on the same floor</div>
+      <div class="nearby-list" id="nearby-list"></div>
+    </div>
+  </div>
+  <div class="idle-track">
+    <div class="idle-bar" id="idle-bar-store"></div>
+  </div>
+</div>
+
+<script>
+var STORES = [
+  { name:"Mr Alex Jewelers",             icon:"💍", logo:"logos/mralexlogo.png",         cat:"Jewelry",            floor:1, local:"L-128", zona:"North Wing",     hora:"10:00 AM - 6:00 PM",  tel:"786-542-5226", promo:"" },
+  { name:"Sasha's Gem Mia",              icon:"💎", logo:"",          cat:"Jewelry",            floor:1, local:"L-135", zona:"North Wing",     hora:"9:00 AM - 6:00 PM",   tel:"347-824-5544", promo:"Custom made pieces available" },
+  { name:"Cashdeal Goods Buyer",         icon:"⌚", logo:"",          cat:"Jewelry & Antiques", floor:1, local:"L-101", zona:"Center",         hora:"Open 24 Hours",       tel:"305-927-4567", promo:"We buy Rolex, diamonds, coins & antiques" },
+  { name:"The Elaine Group Inc.",        icon:"🏛️", logo:"",     cat:"Jewelry",            floor:1, local:"L-509", zona:"South Wing",     hora:"9:00 AM - 6:00 PM",   tel:"",             promo:"" },
+  { name:"VVS Cartell",                  icon:"💍", logo:"",       cat:"Jewelry",            floor:3, local:"L-226", zona:"North Wing",     hora:"11:30 AM - 6:00 PM",  tel:"305-465-1536", promo:"" },
+  { name:"Rene Escobar Inc",             icon:"✨", logo:"",      cat:"Jewelry",            floor:3, local:"L-906", zona:"North Wing",     hora:"9:00 AM - 6:00 PM",   tel:"305-932-2880", promo:"" },
+  { name:"Time Century Jewelry Center",  icon:"⌚", logo:"",      cat:"Jewelry",            floor:4, local:"L-102", zona:"Center",         hora:"10:00 AM - 6:00 PM",  tel:"786-464-9191", promo:"Excellent place for quality gold" },
+  { name:"Alexander Sparks Miami",       icon:"💍", logo:"",  cat:"Jewelry",            floor:4, local:"L-103", zona:"South Wing",     hora:"11:00 AM - 6:00 PM",  tel:"212-433-4367", promo:"Rings, tennis chains & bracelets" },
+  { name:"Relojería",                    icon:"⌚", logo:"",          cat:"Jewelry",            floor:4, local:"L-104", zona:"Center",         hora:"10:00 AM - 6:00 PM",  tel:"",             promo:"" },
+  { name:"Marlan Corporation",           icon:"💼", logo:"",             cat:"Jewelry",            floor:5, local:"L-105", zona:"North Wing",     hora:"10:00 AM - 6:00 PM",  tel:"",             promo:"" },
+  { name:"Maria's Jewelry",              icon:"💍", logo:"",    cat:"Jewelry",            floor:5, local:"L-120", zona:"North Wing",     hora:"9:00 AM - 6:00 PM",   tel:"305-379-1513", promo:"" },
+  { name:"Jexis Jewelry Repair",         icon:"🔧", logo:"",              cat:"Jewelry",            floor:5, local:"L-106", zona:"Center",         hora:"9:00 AM - 6:00 PM",   tel:"",             promo:"Professional jewelry repair service" },
+  { name:"Cogent Communications",        icon:"📡", logo:"",             cat:"Jewelry",            floor:5, local:"L-135", zona:"Center",         hora:"9:00 AM - 6:00 PM",   tel:"",             promo:"" },
+  { name:"A Monique Affair",             icon:"💒", logo:"",     cat:"Jewelry",            floor:5, local:"L-107", zona:"North Wing",     hora:"9:00 AM - 6:00 PM",   tel:"",             promo:"" },
+  { name:"DP Fashion Group",             icon:"👗", logo:"",         cat:"Jewelry",            floor:5, local:"L-108", zona:"South Wing",     hora:"9:00 AM - 6:00 PM",   tel:"305-781-8560", promo:"" },
+  { name:"Sami Jewelry",                 icon:"💎", logo:"",       cat:"Jewelry",            floor:6, local:"L-228", zona:"North Wing",     hora:"9:00 AM - 6:00 PM",   tel:"786-518-8770", promo:"" },
+  { name:"Plush Jewelers",               icon:"✨", logo:"",     cat:"Jewelry",            floor:6, local:"L-109", zona:"South Wing",     hora:"10:00 AM - 6:00 PM",  tel:"",             promo:"" },
+  { name:"Starbucks",                    icon:"☕", logo:"",           cat:"Cafés",              floor:6, local:"L-115", zona:"Main Entrance",  hora:"8:00 AM - 10:00 PM",  tel:"555-0115",     promo:"Free drink with any purchase" },
+  { name:"Perfumery",                    icon:"🌸", logo:"",           cat:"Beauty",             floor:6, local:"L-120", zona:"South Wing",     hora:"10:00 AM - 9:00 PM",  tel:"555-0120",     promo:"Gift sets available" },
+  { name:"Pharmacy",                     icon:"💊", logo:"",            cat:"Health",             floor:7, local:"L-125", zona:"South Entrance", hora:"8:00 AM - 10:00 PM",  tel:"555-0125",     promo:"" },
+  { name:"Cinemas",                      icon:"🎬", logo:"",             cat:"Entertainment",      floor:7, local:"L-401", zona:"North Wing",     hora:"11:00 AM - 11:00 PM", tel:"555-0401",     promo:"Tuesday 2-for-1 on all shows" },
+  { name:"Bowling",                      icon:"🎳", logo:"",             cat:"Entertainment",      floor:7, local:"L-410", zona:"Center",         hora:"11:00 AM - 11:00 PM", tel:"555-0410",     promo:"Book ahead and save 15%" },
+  { name:"Arcade",                       icon:"🕹️", logo:"",             cat:"Entertainment",      floor:2, local:"L-415", zona:"South Wing",     hora:"11:00 AM - 11:00 PM", tel:"555-0415",     promo:"" },
+  { name:"Bakery",                       icon:"🥐", logo:"",              cat:"Cafés",              floor:2, local:"L-515", zona:"South Wing",     hora:"8:00 AM - 9:00 PM",   tel:"555-0515",     promo:"Fresh bread baked every hour" },
+  { name:"Ice Cream",                    icon:"🍦", logo:"",           cat:"Cafés",              floor:2, local:"L-520", zona:"Center",         hora:"10:00 AM - 10:00 PM", tel:"555-0520",     promo:"" },
+];
+
+var FLOORS = [
+  { id:0,  label:"All floors" },
+  { id:1,  label:"Floor 1" },
+  { id:2,  label:"Floor 2" },
+  { id:3,  label:"Floor 3" },
+  { id:4,  label:"Floor 4" },
+  { id:5,  label:"Floor 5" },
+  { id:6,  label:"Floor 6" },
+  { id:7,  label:"Floor 7" },
+];
+
+var curFloor = 0;
+var idleTimer = null;
+var idleAnimTimer = null;
+var IDLE_SECS = 40;
+
+// ── Clock ──
+function updateClock() {
+  var now = new Date();
+  var h = String(now.getHours()).padStart(2,'0');
+  var m = String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('clock-time').textContent = h + ':' + m;
+  var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('clock-date').textContent = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate();
+}
+updateClock();
+setInterval(updateClock, 10000);
+
+// ── Screens ──
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+}
+
+function goVideo() {
+  showScreen('s-video');
+  resetIdle();
+}
+
+function goDir() {
+  showScreen('s-dir');
+  searchQuery = '';
+  updateSearchDisplay();
+  renderFloorTabs();
+  renderStores();
+  resetIdle();
+}
+
+function goStore(idx) {
+  var s = STORES[idx];
+  if (s.logo) {
+    document.getElementById('det-icon').innerHTML = '<img src="' + s.logo + '" style="width:100%;height:100%;object-fit:contain;border-radius:10px;">';
+  } else {
+    document.getElementById('det-icon').textContent = s.icon;
+  }
+  document.getElementById('det-name').textContent = s.name;
+  document.getElementById('det-cat-text').textContent = s.cat;
+  document.getElementById('det-piso').textContent = 'Floor ' + s.floor;
+  document.getElementById('det-local').textContent = s.local;
+  document.getElementById('det-zona').textContent = s.zona;
+  document.getElementById('det-hora').textContent = s.hora;
+  document.getElementById('det-tel').textContent = s.tel;
+  document.getElementById('det-floor-pill').textContent = 'Floor ' + s.floor;
+
+  var promo = document.getElementById('det-promo');
+  if (s.promo) {
+    promo.style.display = 'flex';
+    document.getElementById('det-promo-text').textContent = s.promo;
+  } else {
+    promo.style.display = 'none';
+  }
+
+  // Map destination position (randomized per store for demo)
+  var positions = [
+    {x:300,y:40},{x:440,y:40},{x:580,y:40},
+    {x:300,y:180},{x:440,y:180},{x:560,y:180},
+    {x:40,y:180},{x:160,y:40}
+  ];
+  var pos = positions[idx % positions.length];
+  var dest = document.getElementById('map-dest');
+  var destIcon = document.getElementById('map-dest-icon');
+  var destName = document.getElementById('map-dest-name');
+  dest.setAttribute('x', pos.x);
+  dest.setAttribute('y', pos.y);
+  destIcon.setAttribute('x', pos.x + 30);
+  destIcon.setAttribute('y', pos.y + 36);
+  destName.setAttribute('x', pos.x + 30);
+  destName.setAttribute('y', pos.y + 54);
+  destIcon.textContent = s.icon;
+  destName.textContent = s.name.toUpperCase();
+
+  // Nearby stores
+  var nearby = STORES.filter(function(t, i) { return t.floor === s.floor && i !== idx; }).slice(0, 5);
+  var nl = document.getElementById('nearby-list');
+  nl.innerHTML = '';
+  nearby.forEach(function(t) {
+    var ti = STORES.indexOf(t);
+    var pill = document.createElement('div');
+    pill.className = 'nearby-pill';
+    pill.innerHTML = '<span style="font-size:16px">' + t.icon + '</span><span>' + t.name + '</span>';
+    pill.onclick = function() { goStore(ti); };
+    nl.appendChild(pill);
+  });
+  if (!nearby.length) {
+    nl.innerHTML = '<span style="font-size:13px;color:var(--muted);font-weight:300">No nearby stores on this floor</span>';
+  }
+
+  showScreen('s-store');
+  resetIdle();
+}
+
+// ── Floor tabs ──
+function renderFloorTabs() {
+  var container = document.getElementById('floor-tabs');
+  container.innerHTML = '';
+  FLOORS.forEach(function(f) {
+    var count = f.id === 0 ? STORES.length : STORES.filter(function(s){ return s.floor === f.id; }).length;
+    var el = document.createElement('div');
+    el.className = 'ftab' + (curFloor === f.id ? ' on' : '');
+    el.innerHTML = '<span>' + f.label + '</span><span class="count">' + count + '</span>';
+    el.onclick = function() { curFloor = f.id; renderFloorTabs(); renderStores(); resetIdle(); };
+    container.appendChild(el);
+  });
+}
+
+// ── Store grid ──
+function renderStores() {
+  var q = searchQuery.toLowerCase().trim();
+  var grid = document.getElementById('stores-grid');
+  grid.innerHTML = '';
+
+  var filtered = STORES.filter(function(s) {
+    var matchFloor = curFloor === 0 || s.floor === curFloor;
+    var matchQ = !q || s.name.toLowerCase().includes(q) || s.cat.toLowerCase().includes(q) || s.zona.toLowerCase().includes(q);
+    return matchFloor && matchQ;
+  });
+
+  var heading = curFloor === 0 ? 'All stores' : FLOORS.find(function(f){ return f.id === curFloor; }).label;
+  document.getElementById('dir-heading').textContent = heading.replace(/Floor \d+ — /, 'Floor ' + curFloor + ' — ');
+  document.getElementById('dir-count').textContent = filtered.length + ' stores';
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty-msg">No results for "' + q + '"</div>';
+    return;
+  }
+
+  filtered.forEach(function(s) {
+    var idx = STORES.indexOf(s);
+    var iconHtml = s.logo
+      ? '<img src="' + s.logo + '" style="width:100%;height:100%;object-fit:contain;border-radius:6px;">'
+      : s.icon;
+    var card = document.createElement('div');
+    card.className = 'store-card';
+    card.innerHTML =
+      '<div class="sc-top">' +
+        '<div class="sc-icon">' + iconHtml + '</div>' +
+        '<div><div class="sc-name">' + s.name + '</div><div class="sc-cat">' + s.cat + '</div></div>' +
+      '</div>' +
+      '<div class="sc-bottom">' +
+        '<span class="sc-loc">' + s.zona + ' · ' + s.local + '</span>' +
+        '<span class="sc-floor-badge">F' + s.floor + '</span>' +
+      '</div>';
+    card.onclick = function() { goStore(idx); };
+    grid.appendChild(card);
+  });
+}
+
+// ── Search state ──
+var searchQuery = '';
+
+function updateSearchDisplay() {
+  var disp = document.getElementById('search-display-text');
+  var clr = document.getElementById('search-clear');
+  if (searchQuery) {
+    disp.textContent = searchQuery;
+    disp.style.color = 'var(--white)';
+    clr.style.display = 'inline';
+  } else {
+    disp.textContent = 'Search store or category...';
+    disp.style.color = 'rgba(248,246,241,0.4)';
+    clr.style.display = 'none';
+  }
+}
+
+function clearSearch(e) {
+  if (e) e.stopPropagation();
+  searchQuery = '';
+  updateSearchDisplay();
+  renderStores();
+  resetIdle();
+}
+
+// ── On-screen keyboard ──
+var KB_ROWS = [
+  ['Q','W','E','R','T','Y','U','I','O','P'],
+  ['A','S','D','F','G','H','J','K','L'],
+  ['Z','X','C','V','B','N','M']
+];
+
+function buildKeyboard() {
+  var container = document.getElementById('kb-rows');
+  container.innerHTML = '';
+  KB_ROWS.forEach(function(row) {
+    var rowEl = document.createElement('div');
+    rowEl.className = 'kb-row';
+    row.forEach(function(key) {
+      var btn = document.createElement('div');
+      btn.className = 'kb-key';
+      btn.textContent = key;
+      btn.onclick = function() { kbPress(key); };
+      rowEl.appendChild(btn);
+    });
+    container.appendChild(rowEl);
+  });
+  var bottomRow = document.createElement('div');
+  bottomRow.className = 'kb-row';
+  var spaceBtn = document.createElement('div');
+  spaceBtn.className = 'kb-key wide';
+  spaceBtn.textContent = 'Space';
+  spaceBtn.onclick = function() { kbPress(' '); };
+  var backBtn = document.createElement('div');
+  backBtn.className = 'kb-key wide gold';
+  backBtn.textContent = '⌫ Delete';
+  backBtn.onclick = function() { kbBackspace(); };
+  var doneBtn = document.createElement('div');
+  doneBtn.className = 'kb-key wide gold';
+  doneBtn.textContent = 'Done ✓';
+  doneBtn.onclick = function() { closeKeyboard(); };
+  bottomRow.appendChild(spaceBtn);
+  bottomRow.appendChild(backBtn);
+  bottomRow.appendChild(doneBtn);
+  container.appendChild(bottomRow);
+}
+
+function kbPress(key) {
+  searchQuery += key;
+  document.getElementById('kb-text-display').textContent = searchQuery;
+  renderStores();
+  updateSearchDisplay();
+  resetIdle();
+}
+
+function kbBackspace() {
+  searchQuery = searchQuery.slice(0, -1);
+  document.getElementById('kb-text-display').textContent = searchQuery;
+  renderStores();
+  updateSearchDisplay();
+  resetIdle();
+}
+
+function openKeyboard() {
+  buildKeyboard();
+  document.getElementById('kb-text-display').textContent = searchQuery;
+  var overlay = document.getElementById('keyboard-overlay');
+  overlay.style.display = 'flex';
+  resetIdle();
+}
+
+function closeKeyboard() {
+  document.getElementById('keyboard-overlay').style.display = 'none';
+  resetIdle();
+}
+
+// ── Idle timer ──
+function resetIdle() {
+  clearTimeout(idleTimer);
+  clearTimeout(idleAnimTimer);
+  ['idle-bar', 'idle-bar-dir', 'idle-bar-store'].forEach(function(id) {
+    var bar = document.getElementById(id);
+    if (!bar) return;
+    bar.style.transition = 'none';
+    bar.style.transform = 'scaleX(1)';
+  });
+  idleAnimTimer = setTimeout(function() {
+    ['idle-bar', 'idle-bar-dir', 'idle-bar-store'].forEach(function(id) {
+      var bar = document.getElementById(id);
+      if (!bar) return;
+      bar.style.transition = 'transform ' + IDLE_SECS + 's linear';
+      bar.style.transform = 'scaleX(0)';
+    });
+  }, 200);
+  idleTimer = setTimeout(function() {
+    goVideo();
+  }, (IDLE_SECS + 0.5) * 1000);
+}
+
+// Listen for any interaction
+document.addEventListener('click', resetIdle);
+document.addEventListener('touchstart', resetIdle, { passive: true });
+document.addEventListener('keydown', resetIdle);
+document.addEventListener('mousemove', resetIdle);
+
+// ── Init ──
+renderFloorTabs();
+renderStores();
+resetIdle();
+</script>
+</body>
+</html>
